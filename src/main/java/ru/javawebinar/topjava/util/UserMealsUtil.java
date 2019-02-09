@@ -22,14 +22,14 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31,13,0), "Обед", 500),
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31,20,0), "Ужин", 510)
         );
-        Random rand = new Random();
+/*        Random rand = new Random();
         List<UserMeal> userMeals = Stream.generate(() ->
                 mealList.get(rand.nextInt(mealList.size())))
                 .limit(1000).collect(Collectors.toList());
         List<UserMeal> userMeals2 = Stream.generate(() ->
                 mealList.get(rand.nextInt(mealList.size())))
-                .limit(1000000).collect(Collectors.toList());
-        System.out.println(getFilteredWithExceeded(mealList, LocalTime.of(7,0),LocalTime.of(13,0), 2000));
+                .limit(1000000).collect(Collectors.toList());*/
+        System.out.println(getFilteredWithExceeded(mealList, LocalTime.of(7,0),LocalTime.of(12,0), 2000));
         //getFilteredWithExceeded(userMeals, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);
         //getFilteredWithExceeded(userMeals2, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);*/
 
@@ -55,8 +55,19 @@ public class UserMealsUtil {
         if(mealList==null){
             mealList = Collections.emptyList();
         }
-        long start = System.nanoTime();
-        Map<LocalDate, Integer> statisticsMap = mealList.stream()
+        Map<LocalDate, Integer> statistics = new HashMap<>();
+        for (UserMeal userMeal : mealList) {
+            statistics.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), (v1, v2) -> v1 + v2);
+        }
+
+        List<UserMealWithExceed> result = new ArrayList<>();
+        for (UserMeal userMeal : mealList) {
+            boolean isExceeded = statistics.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay;
+            if (TimeUtil.isBetween(userMeal.getDateTime().toLocalTime(), startTime, endTime)) {
+                result.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), isExceeded));
+            }
+        }
+        /*Map<LocalDate, Integer> statisticsMap = mealList.stream()
                 .collect(
                         Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(),
                         Collectors.summingInt(UserMeal::getCalories)));
@@ -72,8 +83,7 @@ public class UserMealsUtil {
             return new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), exceed);
         })
                 .collect(Collectors.toList());
-        long end = System.nanoTime();
-        //System.out.println(String.format("Времени затрачено на %d элементов %d нано",mealList.size(),end-start));
+        */
         return result;
     }
 }
