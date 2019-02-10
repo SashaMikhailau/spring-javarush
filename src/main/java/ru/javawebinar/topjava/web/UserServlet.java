@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalTime;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -18,7 +19,8 @@ public class UserServlet extends HttpServlet {
         log.debug("redirect to users");
 
 //        request.getRequestDispatcher("/users.jsp").forward(request, response);
-//        request.getRequestDispatcher("/users.jsp").forward(request, response);
-        response.sendRedirect("users.jsp");
+        request.setAttribute("time", LocalTime.now().toString());
+      request.getRequestDispatcher("/users.jsp").forward(request, response);
+      //  response.sendRedirect("users.jsp");
     }
 }
