@@ -40,6 +40,13 @@
         <td>
             <c:out value="${item.calories}"/>
         </td>
+        <td>
+            <a href="index.html">Update</a>
+        </td>
+        <td>
+            <a href="index.html">Delete</a>
+        </td>
+
     </tr>
 
     </c:forEach>
