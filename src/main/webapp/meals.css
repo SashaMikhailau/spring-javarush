@@ -1,0 +1,17 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+td {
+    width: auto;
+    margin: 0;
+    border: 1px solid black;
+
+}
+tr.with_excess{
+    background-color: red;
+}
+
+tr.without_excess{
+    background-color: lawngreen;
+}
