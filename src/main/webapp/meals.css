@@ -1,0 +1,10 @@
+tr{
+    border: black;
+}
+tr.with_excess{
+    background-color: red;
+}
+
+tr.without_excess{
+    background-color: lawngreen;
+}
