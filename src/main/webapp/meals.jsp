@@ -10,10 +10,12 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>MealList</title>
     <link rel="stylesheet" href="meals.css">
 </head>
 <body>
+<c:set var="name" value="Sasha"/>
+<h1>Hello ${name} </h1>
 <table>
     <tr>
         <th>
@@ -28,9 +30,6 @@
     </tr>
     <c:forEach var="item" items="${list}">
         <c:set var="trclass" value="${item.excess?'with_excess':'without_excess'}"/>
-        <%--<c:if test="${item.excess}">
-            <c:set var="trclass" value="with_excess"/>
-        </c:if>--%>
     <tr class="${trclass}">
         <td>
             <c:out value="${fn:replace(item.dateTime,'T',' ')}"/>
