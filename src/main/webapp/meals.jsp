@@ -19,6 +19,9 @@
 <table>
     <tr>
         <th>
+            ID
+        </th>
+        <th>
             Date Time
         </th>
         <th>
@@ -32,6 +35,9 @@
         <c:set var="trclass" value="${item.excess?'with_excess':'without_excess'}"/>
     <tr class="${trclass}">
         <td>
+            <c:out value="${item.id}"/>
+        </td>
+        <td>
             <c:out value="${fn:replace(item.dateTime,'T',' ')}"/>
         </td>
         <td>
@@ -41,10 +47,10 @@
             <c:out value="${item.calories}"/>
         </td>
         <td>
-            <a href="index.html">Update</a>
+            <a href="meals?action=update&mealId=${item.id}">Update</a>
         </td>
         <td>
-            <a href="index.html">Delete</a>
+            <a href="meals?action=delete&mealId=${item.id}">Delete</a>
         </td>
 
     </tr>
