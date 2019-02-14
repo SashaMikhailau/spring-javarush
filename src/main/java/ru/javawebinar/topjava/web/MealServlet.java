@@ -36,15 +36,19 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.debug("Posted ");
         req.setCharacterEncoding("UTF-8");
-        int mealId = Integer.parseInt(req.getParameter("mealId"));
         String description = req.getParameter("description");
         String dateTime= req.getParameter("datetime");
         int calories= Integer.parseInt(req.getParameter("calories"));
-        log.debug(mealId+" "+description+" "+dateTime);
         LocalDateTime localDateTime = LocalDateTime.parse(dateTime, dtf);
         Meal meal = new Meal(localDateTime,description,calories);
-        meal.setId(mealId);
-        mealDao.updateMeal(meal);
+        String id = req.getParameter("mealId");
+        if (id == null || id.isEmpty()) {
+            mealDao.addMeal(meal);
+        } else {
+            int mealId = Integer.parseInt(id);
+            meal.setId(mealId);
+            mealDao.updateMeal(meal);
+        }
         resp.sendRedirect("meals");
     }
 
@@ -59,13 +63,16 @@ public class MealServlet extends HttpServlet {
             int id = Integer.parseInt(req.getParameter("mealId"));
             Meal meal = mealDao.getMealById(id);
             req.setAttribute("meal",meal);
-            req.getRequestDispatcher("/onemeal.jsp").forward(req,resp);
+            req.getRequestDispatcher(EDIT).forward(req,resp);
+            return;
+        } else if ("insert".equals(action)) {
+            req.getRequestDispatcher(EDIT).forward(req,resp);
             return;
         }
         List<Meal> meals = mealDao.getAllMeals();
         List<MealTo> list = MealsUtil.getFilteredWithExcess(meals, LocalTime.MIN, LocalTime.MAX, 2000);
         req.setAttribute("list", list);
-        req.getRequestDispatcher("/meals.jsp").forward(req, resp);
+        req.getRequestDispatcher(LIST).forward(req, resp);
 
     }
 }

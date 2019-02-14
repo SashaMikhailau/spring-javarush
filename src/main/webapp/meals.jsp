@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="f" uri="http://example.com/functions" %>
 <html>
 <head>
     <title>MealList</title>
@@ -38,7 +39,7 @@
             <c:out value="${item.id}"/>
         </td>
         <td>
-            <c:out value="${fn:replace(item.dateTime,'T',' ')}"/>
+            <c:out value="${f:formatLocalDateTime(item.dateTime,'dd MM yyyy - HH:mm')}"/>
         </td>
         <td>
             <c:out value="${item.description}"/>
@@ -57,6 +58,7 @@
 
     </c:forEach>
 </table>
+<a href="meals?action=insert">Add</a>
 
 </body>
 </html>
