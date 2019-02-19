@@ -2,7 +2,9 @@ package ru.javawebinar.topjava.model;
 
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
@@ -88,4 +90,5 @@ public class User extends AbstractNamedEntity {
                 ", caloriesPerDay=" + caloriesPerDay +
                 ')';
     }
+
 }
