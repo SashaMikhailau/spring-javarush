@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 
@@ -8,33 +11,47 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
+@Controller
 public class MealRestController {
+
     private MealService service;
 
-    List<MealTo> getAll() {
-        return service.getAll(authUserId());
+    @Autowired
+    public MealRestController(MealService service) {
+        this.service = service;
     }
 
-    List<MealTo> getAllByDateTime(LocalDate startdate, LocalTime startTIme, LocalDate endDate,
-                                  LocalTime endTime) {
+    public List<MealTo> getAll() {
+        return service.getAll(authUserId(),authUserCaloriesPerDay());
+    }
+
+    public List<MealTo> getAllByDateTime(String startDateText, String startTimeText,
+                                         String endDateText,
+                                  String endTimeText) {
+        LocalDate startDate = startDateText.isEmpty() ? LocalDate.MIN : LocalDate.parse(startDateText);
+        LocalDate endDate = endDateText.isEmpty() ? LocalDate.MAX : LocalDate.parse(endDateText);
+        LocalTime startTime = startTimeText.isEmpty() ? LocalTime.MIN: LocalTime.parse(startTimeText);
+        LocalTime endTime= endTimeText.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTimeText);
         return service.getAllByDateTime(authUserId(),
-                Objects.isNull(startdate) ? LocalDate.MIN : startdate,
-                Objects.isNull(startTIme) ? LocalTime.MIN : startTIme,
-                Objects.isNull(endDate) ? LocalDate.MAX : endDate,
-                Objects.isNull(endTime) ? LocalTime.MAX : endTime);
+                startDate,
+                startTime,
+                endDate,
+                endTime,
+                authUserCaloriesPerDay());
     }
 
-    MealTo getById(Integer mealId) {
+    public Meal get(Integer mealId) {
         return service.getById(authUserId(), mealId);
     }
 
-    void update(MealTo mealTo) {
-        service.update(authUserId(), mealTo);
+    public void update(Meal meal) {
+        service.update(authUserId(), meal);
     }
 
-    void delete(Integer mealId) {
+    public void delete(Integer mealId) {
         service.delete(authUserId(), mealId);
     }
 

@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealTo;
@@ -10,26 +12,32 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@Service
 public class MealServiceImpl implements MealService {
+
+    @Autowired
+    public MealServiceImpl(MealRepository repository) {
+        this.repository = repository;
+    }
 
     private MealRepository repository;
 
     @Override
-    public List<MealTo> getAll(Integer userId) {
+    public List<MealTo> getAll(Integer userId,int calories) {
         return MealsUtil.getFilteredWithExcess(repository.getAll(userId),
-                SecurityUtil.authUserCaloriesPerDay(), LocalTime.MIN,
-                LocalTime.MAX);
+               calories, LocalTime.MIN,LocalTime.MAX);
     }
 
     @Override
-    public List<MealTo> getAllByDateTime(Integer userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+    public List<MealTo> getAllByDateTime(Integer userId, LocalDate startDate, LocalTime startTime
+            , LocalDate endDate, LocalTime endTime,int calories) {
         return MealsUtil.getFilteredWithExcess(repository.getAllByDate(userId, startDate, endDate),
-                SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
+               calories, startTime, endTime);
     }
 
     @Override
-    public MealTo getById(Integer userId, Integer mealId) {
-        return MealsUtil.createWithExcess(repository.get(userId, mealId), false);
+    public Meal getById(Integer userId, Integer mealId) {
+        return repository.get(userId, mealId);
     }
 
     @Override
@@ -38,9 +46,7 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public void update(Integer userId, MealTo mealTo) {
-        Meal meal = new Meal(mealTo.getId(), mealTo.getDateTime(), mealTo.getDescription(),
-                mealTo.getCalories());
+    public void update(Integer userId, Meal meal) {
         repository.save(userId, meal);
 
     }

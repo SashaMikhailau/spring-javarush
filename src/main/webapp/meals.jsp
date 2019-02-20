@@ -20,6 +20,33 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
+    <form method="get" action="meals">
+        <input type="hidden" name="action" value="filtered">
+        <dl>
+            <dt>Start date</dt>
+            <dd><input type="date" name = "startDate" value="${param.startDate}"></dd>
+            <dt>End date</dt>
+            <dd><input type="date" name = "endDate" value="${param.endDate}"></dd>
+        </dl>
+        <dl>
+            <dt>Start time</dt>
+            <dd><input type="time" name = "startTime" value="${param.startTime}"></dd>
+            <dt>End time</dt>
+            <dd><input type="time" name = "endTime" value="${param.endTime}"></dd>
+        </dl>
+        <button type="submit">Filter</button>
+        <button type="reset">Clear</button>
+    </form>
+    <form method="get" action="users">
+        <input type="hidden" name="action" value="userselect"/>
+        <select name="userid">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <button type="submit">Select</button>
+    </form>
+
+
     <a href="meals?action=create">Add Meal</a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
