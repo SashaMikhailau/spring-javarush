@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 
@@ -12,41 +10,32 @@ import java.util.Objects;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
-@Controller
 public class MealRestController {
     private MealService service;
 
-    @Autowired
-    public MealRestController(MealService service) {
-        this.service = service;
-    }
-
-    public List<MealTo> getAll() {
+    List<MealTo> getAll() {
         return service.getAll(authUserId());
     }
 
-    public List<MealTo> getAll(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-
-        return service.getAll(authUserId(),
-                Objects.isNull(startDate) ? LocalDate.MIN : startDate,
-                Objects.isNull(startTime) ? LocalTime.MIN : startTime,
+    List<MealTo> getAllByDateTime(LocalDate startdate, LocalTime startTIme, LocalDate endDate,
+                                  LocalTime endTime) {
+        return service.getAllByDateTime(authUserId(),
+                Objects.isNull(startdate) ? LocalDate.MIN : startdate,
+                Objects.isNull(startTIme) ? LocalTime.MIN : startTIme,
                 Objects.isNull(endDate) ? LocalDate.MAX : endDate,
-                Objects.isNull(endTime) ? LocalTime.MAX : endTime
-        );
+                Objects.isNull(endTime) ? LocalTime.MAX : endTime);
     }
 
-
-    public void delete(Integer id) {
-        service.delete(authUserId(), id);
-
+    MealTo getById(Integer mealId) {
+        return service.getById(authUserId(), mealId);
     }
 
-    public MealTo get(Integer id) {
-        return service.get(authUserId(), id);
+    void update(MealTo mealTo) {
+        service.update(authUserId(), mealTo);
     }
 
-    public void update(MealTo meal) {
-        service.update(authUserId(), meal);
+    void delete(Integer mealId) {
+        service.delete(authUserId(), mealId);
     }
 
 
