@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.ValidationUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,16 +27,16 @@ public class MealRestController {
     }
 
     public List<MealTo> getAll() {
-        return service.getAll(authUserId(),authUserCaloriesPerDay());
+        return service.getAll(authUserId(), authUserCaloriesPerDay());
     }
 
     public List<MealTo> getAllByDateTime(String startDateText, String startTimeText,
                                          String endDateText,
-                                  String endTimeText) {
+                                         String endTimeText) {
         LocalDate startDate = startDateText.isEmpty() ? LocalDate.MIN : LocalDate.parse(startDateText);
         LocalDate endDate = endDateText.isEmpty() ? LocalDate.MAX : LocalDate.parse(endDateText);
-        LocalTime startTime = startTimeText.isEmpty() ? LocalTime.MIN: LocalTime.parse(startTimeText);
-        LocalTime endTime= endTimeText.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTimeText);
+        LocalTime startTime = startTimeText.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTimeText);
+        LocalTime endTime = endTimeText.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTimeText);
         return service.getAllByDateTime(authUserId(),
                 startDate,
                 startTime,
@@ -47,7 +49,12 @@ public class MealRestController {
         return service.getById(authUserId(), mealId);
     }
 
-    public void update(Meal meal) {
+    public void update(Meal meal, Integer mealId) {
+        meal.setUserId(authUserId());
+        service.update(authUserId(), meal);
+    }
+
+    public void create(Meal meal) {
         service.update(authUserId(), meal);
     }
 

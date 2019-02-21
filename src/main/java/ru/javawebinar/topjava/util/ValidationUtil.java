@@ -2,7 +2,10 @@ package ru.javawebinar.topjava.util;
 
 
 import ru.javawebinar.topjava.model.AbstractBaseEntity;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+
+import java.util.Objects;
 
 public class ValidationUtil {
 
@@ -38,5 +41,10 @@ public class ValidationUtil {
         } else if (entity.getId() != id) {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
         }
+    }
+
+    public static boolean checkUserId(Integer userId, Meal meal) {
+
+        return Objects.nonNull(meal)&&meal.getUserId().equals(userId);
     }
 }

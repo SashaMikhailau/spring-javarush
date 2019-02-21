@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
@@ -37,17 +38,20 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public Meal getById(Integer userId, Integer mealId) {
-        return repository.get(userId, mealId);
+        Meal meal = repository.get(userId, mealId);
+        return ValidationUtil.checkNotFoundWithId(meal, mealId);
     }
 
     @Override
     public void delete(Integer userId, Integer mealId) {
-        repository.delete(userId, mealId);
+        boolean deleted = repository.delete(userId, mealId);
+        ValidationUtil.checkNotFoundWithId(deleted,(int)mealId);
     }
 
     @Override
     public void update(Integer userId, Meal meal) {
-        repository.save(userId, meal);
+        Meal saved = repository.save(userId, meal);
+        ValidationUtil.checkNotFoundWithId(saved, meal.getId());
 
     }
 }

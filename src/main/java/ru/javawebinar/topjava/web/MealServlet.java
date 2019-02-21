@@ -47,7 +47,7 @@ public class MealServlet extends HttpServlet {
                 Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        mealRestController.update(meal);
+        mealRestController.update(meal,meal.getId());
         response.sendRedirect("meals");
     }
 
@@ -75,7 +75,6 @@ public class MealServlet extends HttpServlet {
                 String endDateText = request.getParameter("endDate");
                 String startTimeText = request.getParameter("startTime");
                 String endTimeText = request.getParameter("endTime");
-                request.getSession().setAttribute("filtered",true);
                 request.setAttribute("meals",mealRestController.getAllByDateTime(startDateText,
                        startTimeText, endDateText,endTimeText));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);

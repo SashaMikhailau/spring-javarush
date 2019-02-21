@@ -9,11 +9,14 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.checkUserId;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
@@ -36,36 +39,40 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         // treat case: update, but absent in storage
 
         return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> {
-            if (oldMeal.getUserId().equals(userId)) {
+            if (checkUserId(userId, oldMeal)) {
                 return meal;
             } else {
-                throw new NotFoundException(String.format("Meal with id %d doesn`t belong to " +
-                        "user with id %d", id, userId));
+                return null;
             }
         });
     }
 
     @Override
-    public void delete(Integer userId, int id) {
-        if (repository.get(id).getUserId().equals(userId)) {
-            repository.remove(id);
+    public boolean delete(Integer userId, int id) {
+        if (checkUserId(userId, repository.get(id))) {
+            Meal removed = repository.remove(id);
+            return Objects.nonNull(removed);
         }
+        return false;
     }
 
     @Override
     public Meal get(Integer userId, int id) {
         Meal meal = repository.get(id);
-        if (Objects.isNull(meal) || meal.getUserId().equals(userId)) {
-            throw new NotFoundException(String.format("Id = %d not found", id));
+        if (Objects.isNull(meal) || !checkUserId(userId, meal)) {
+            return null;
         }
         return meal;
     }
+
+
 
     @Override
     public Collection<Meal> getAll(Integer userId) {
         return repository.values().stream()
                 .filter(meal ->
-                        meal.getUserId().equals(userId))
+                        checkUserId(userId, meal))
+                .sorted(Comparator.comparing(meal->((Meal)meal).getDateTime()).reversed())
                 .collect(Collectors.toList());
     }
 
