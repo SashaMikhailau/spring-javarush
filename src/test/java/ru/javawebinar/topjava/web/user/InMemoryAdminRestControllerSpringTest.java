@@ -19,17 +19,11 @@ import java.util.Collection;
 
 import static ru.javawebinar.topjava.UserTestData.ADMIN;
 
-@ContextConfiguration({"classpath:spring/spring-app.xml","classpath:spring/spring-db.xml"})
+@ContextConfiguration("classpath:spring-test.xml")
 @RunWith(SpringRunner.class)
 public class InMemoryAdminRestControllerSpringTest {
 
-    @Configuration
-    static class TestConfig{
-        @Bean
-        public InMemoryUserRepositoryImpl inMemoryUserRepository(){
-            return new InMemoryUserRepositoryImpl();
-        }
-    }
+
     @Autowired
     private AdminRestController controller;
 
