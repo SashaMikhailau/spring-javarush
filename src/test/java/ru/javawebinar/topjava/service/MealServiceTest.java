@@ -4,18 +4,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.Util;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -105,6 +108,12 @@ public class MealServiceTest {
         MealTestData.assertMatch(mealService.getAll(USER_ID),testMeals);
     }
 
+    @Test(expected = DataAccessException.class)
+    public void createMealWithDuplicateDateTime() {
+        Meal createdMeal = new Meal(UNIQUE_DATE_TIME, "Late Supper", 2000);
+        Meal insertedMeal = mealService.create(createdMeal, USER_ID);
+    }
+
     @Test(expected = NotFoundException.class)
     public void updateAnotherUserMeal() {
         Meal testMeal = getTestMeal();
@@ -117,6 +126,14 @@ public class MealServiceTest {
         Meal testMeal = getTestMeal();
         testMeal.setId(100);
         mealService.update(testMeal,USER_ID);
+    }
+
+    @Test(expected = DataAccessException.class)
+    public void updateMealWithDuplicateDateTime() {
+        Meal testMeal= getTestMeal();
+        testMeal.setId(3);
+        testMeal.setDateTime(UNIQUE_DATE_TIME);
+        Meal insertedMeal = mealService.create(testMeal, USER_ID);
     }
 
     @Test
@@ -135,4 +152,27 @@ public class MealServiceTest {
         testMeals.sort(Comparator.comparing(Meal::getDateTime).reversed());
         assertMatch(mealService.getAll(USER_ID),testMeals);
     }
+
+    @Test
+    public void getBetweenDateTimeNotExistingUser() {
+        List<Meal> meals = mealService.getBetweenDateTimes(TEST_START_DATETIME, TEST_END_DATETIME, INVALID_ID);
+        assertMatch(meals,Collections.emptyList());
+    }
+
+    @Test
+    public void getBetweenDateTime() {
+        List<Meal> meals = mealService.getBetweenDateTimes(TEST_START_DATETIME, TEST_END_DATETIME
+                , USER_ID);
+        List<Meal> expected = getUserMeals().stream().filter(meal -> Util.isBetween(meal.getDateTime(), TEST_START_DATETIME,
+                TEST_END_DATETIME)).collect(Collectors.toList());
+        assertMatch(meals,expected);
+    }
+    @Test
+    public void getBetweenDates() {
+        List<Meal> meals = mealService.getBetweenDates(TEST_START_DATE, TEST_END_DATE,USER_ID);
+        List<Meal> expected = getUserMeals().stream().filter(meal -> Util.isBetween(meal.getDate(), TEST_START_DATE,
+                TEST_END_DATE)).collect(Collectors.toList());
+        assertMatch(meals,expected);
+    }
+
 }
