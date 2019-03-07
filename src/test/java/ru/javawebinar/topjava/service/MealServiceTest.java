@@ -1,7 +1,16 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -11,7 +20,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Month;
 
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -25,13 +36,51 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-
     static {
         SLF4JBridgeHandler.install();
     }
 
+    public static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
+    private static StringBuilder totalTime = new StringBuilder();
+
     @Autowired
     private MealService service;
+
+    @ClassRule
+    public static TestRule testRule = (base, description) -> new Statement() {
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                base.evaluate();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+            logger.debug(totalTime.toString());
+        }
+    };
+    @Rule
+    public TestWatcher testWatcher = new TestWatcher() {
+        LocalTime startTime;
+
+        @Override
+        protected void starting(Description description) {
+            startTime = LocalTime.now();
+        }
+
+        @Override
+        protected void finished(Description description) {
+            Duration duration = Duration.between(LocalTime.now(), startTime);
+            logger.debug(duration.toString());
+            totalTime.append(String.format("%n%s - %s", description.getMethodName(), duration.toString()));
+        }
+    };
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    /*@AfterClass
+    public static void afterClass() throws Exception {
+        logger.debug(totalTime.toString());
+    }*/
 
     @Test
     public void delete() throws Exception {
