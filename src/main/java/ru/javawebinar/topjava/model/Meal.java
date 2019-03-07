@@ -1,19 +1,45 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import org.hibernate.validator.constraints.Range;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
+@NamedQueries({
+        @NamedQuery(name = "Meal.UPDATE",query = "UPDATE Meal m SET m.calories = :calories, m" +
+                ".dateTime " +
+                "=:datetime , m.description = :description WHERE m.id = :id AND m.user" +
+                ".id=:user_id"),
+@NamedQuery(name = "Meal.GET_ALL",query = "SELECT m FROM Meal m WHERE m.user.id=:user_id ORDER BY" +
+        " m.dateTime DESC"),
+@NamedQuery(name = "Meal.GET",query = "SELECT m FROM Meal m WHERE m.id = :id AND m.user.id = " +
+        ":user_id")})
+@Entity
+@Table(name = "meals",uniqueConstraints = {@UniqueConstraint(name = "datetime_user_idx",
+        columnNames = {"date_time","user_id"})} )
 public class Meal extends AbstractBaseEntity {
+    public static final String UPDATE = "Meal.UPDATE";
+    public static final String GET_ALL = "Meal.GET_ALL";
+    public static final String GET = "Meal.GET";
+    @NotNull
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
 
+    @NotBlank
+    @Size(max = 100)
+    @Column(name = "description")
     private String description;
 
+    @Range(min=0,max=2000)
+    @Column(name = "calories")
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
     public Meal() {
@@ -34,12 +60,24 @@ public class Meal extends AbstractBaseEntity {
         return dateTime;
     }
 
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public int getCalories() {
         return calories;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
     }
 
     public LocalDate getDate() {
@@ -48,18 +86,6 @@ public class Meal extends AbstractBaseEntity {
 
     public LocalTime getTime() {
         return dateTime.toLocalTime();
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setCalories(int calories) {
-        this.calories = calories;
     }
 
     public User getUser() {
