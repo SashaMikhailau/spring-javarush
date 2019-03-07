@@ -9,22 +9,29 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
 @NamedQueries({
-        @NamedQuery(name = "Meal.UPDATE",query = "UPDATE Meal m SET m.calories = :calories, m" +
+        @NamedQuery(name = "Meal.UPDATE", query = "UPDATE Meal m SET m.calories = :calories, m" +
                 ".dateTime " +
                 "=:datetime , m.description = :description WHERE m.id = :id AND m.user" +
                 ".id=:user_id"),
-@NamedQuery(name = "Meal.GET_ALL",query = "SELECT m FROM Meal m WHERE m.user.id=:user_id ORDER BY" +
-        " m.dateTime DESC"),
-@NamedQuery(name = "Meal.GET",query = "SELECT m FROM Meal m WHERE m.id = :id AND m.user.id = " +
-        ":user_id")})
+        @NamedQuery(name = "Meal.GET_ALL", query = "SELECT m FROM Meal m WHERE m.user.id=:user_id ORDER BY" +
+                " m.dateTime DESC"),
+        @NamedQuery(name = "Meal.GET", query = "SELECT m FROM Meal m WHERE m.id = :id AND m.user.id = " +
+                ":user_id"),
+        @NamedQuery(name = "Meal.DELETE", query = "DELETE FROM Meal m WHERE m.id = :id AND m.user.id = " +
+                ":user_id"),
+        @NamedQuery(name = "Meal.GET_ALL_BETWEEN", query = "SELECT m FROM Meal m WHERE m.user.id = :user_id AND m.dateTime " +
+                "BETWEEN :startdate AND :enddate ORDER BY m.dateTime DESC")})
 @Entity
-@Table(name = "meals",uniqueConstraints = {@UniqueConstraint(name = "datetime_user_idx",
-        columnNames = {"date_time","user_id"})} )
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(name = "datetime_user_idx",
+        columnNames = {"date_time", "user_id"})})
 public class Meal extends AbstractBaseEntity {
     public static final String UPDATE = "Meal.UPDATE";
     public static final String GET_ALL = "Meal.GET_ALL";
     public static final String GET = "Meal.GET";
+    public static final String GET_ALL_BETWEEN = "Meal.GET_ALL_BETWEEN";
+    public static final String DELETE = "Meal.DELETE";
     @NotNull
     @Column(name = "date_time")
     private LocalDateTime dateTime;
@@ -34,12 +41,12 @@ public class Meal extends AbstractBaseEntity {
     @Column(name = "description")
     private String description;
 
-    @Range(min=0,max=2000)
+    @Range(min = 0, max = 2000)
     @Column(name = "calories")
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Meal() {

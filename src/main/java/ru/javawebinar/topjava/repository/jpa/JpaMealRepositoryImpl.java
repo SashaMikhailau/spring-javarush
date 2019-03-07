@@ -44,14 +44,18 @@ public class JpaMealRepositoryImpl implements MealRepository {
                 .setParameter("description", meal.getDescription())
                 .setParameter("id", meal.getId())
                 .setParameter("user_id", userId).executeUpdate();
-        return meal;
+
+        return i == 0 ? null : meal;
 
 
     }
     @Transactional
     @Override
     public boolean delete(int id, int userId) {
-        return false;
+        return entityManager.createNamedQuery(Meal.DELETE)
+                .setParameter("id", id)
+                .setParameter("user_id", userId)
+                .executeUpdate() != 0;
     }
 
     @Override
@@ -73,6 +77,11 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return null;
+        return entityManager.createNamedQuery(Meal.GET_ALL_BETWEEN, Meal.class)
+                .setParameter("user_id", userId)
+                .setParameter("startdate", startDate)
+                .setParameter("enddate", endDate)
+                .getResultList();
+
     }
 }
