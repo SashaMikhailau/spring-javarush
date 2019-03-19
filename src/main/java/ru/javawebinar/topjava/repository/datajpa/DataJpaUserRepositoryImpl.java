@@ -17,7 +17,8 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        return crudRepository.save(user);
+        return
+                crudRepository.save(user);
     }
 
     @Override
