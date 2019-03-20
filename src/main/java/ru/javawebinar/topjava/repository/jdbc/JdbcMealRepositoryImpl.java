@@ -13,14 +13,15 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
-@Repository
-public class JdbcMealRepositoryImpl implements MealRepository {
 
-    private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
+public abstract class JdbcMealRepositoryImpl implements MealRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    protected static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
+
+    protected final JdbcTemplate jdbcTemplate;
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -38,12 +39,7 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        MapSqlParameterSource map = new MapSqlParameterSource()
-                .addValue("id", meal.getId())
-                .addValue("description", meal.getDescription())
-                .addValue("calories", meal.getCalories())
-                .addValue("date_time", meal.getDateTime())
-                .addValue("user_id", userId);
+        MapSqlParameterSource map = getMapSqlParameterSource(meal, userId);
 
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
@@ -59,6 +55,8 @@ public class JdbcMealRepositoryImpl implements MealRepository {
         }
         return meal;
     }
+
+    protected abstract MapSqlParameterSource getMapSqlParameterSource(Meal meal, int userId);
 
     @Override
     public boolean delete(int id, int userId) {
