@@ -4,4 +4,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("datajpa")
 public class DataJpaMealServiceTest extends MealServiceTest {
+
+
 }

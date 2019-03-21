@@ -33,10 +33,10 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class UserServiceTest extends ServiceTest{
 
-    private static final Logger log = LoggerFactory.getLogger("result");
+    protected static final Logger log = LoggerFactory.getLogger("result");
     private static StringBuilder results = new StringBuilder();
     @Autowired
-    private UserService service;
+    protected UserService service;
 
     @Autowired
     private CacheManager cacheManager;
@@ -68,22 +68,24 @@ public abstract class UserServiceTest extends ServiceTest{
 
     @Test
     public void create() throws Exception {
-        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
+        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(),
+              Collections.singleton(Role.ROLE_USER),Collections.emptyList());
         User created = service.create(newUser);
         newUser.setId(created.getId());
         assertMatch(newUser, created);
-        assertMatch(service.getAll(), ADMIN, newUser, USER);
+        assertMatch(service.getAll(), ADMIN, ADMIN_EMPTY,newUser, USER);
     }
 
     @Test(expected = DataAccessException.class)
     public void duplicateMailCreate() throws Exception {
-        service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
+        service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER,
+                Collections.emptyList()));
     }
 
     @Test
     public void delete() throws Exception {
         service.delete(USER_ID);
-        assertMatch(service.getAll(), ADMIN);
+        assertMatch(service.getAll(), ADMIN,ADMIN_EMPTY);
     }
 
     @Test(expected = NotFoundException.class)
@@ -120,6 +122,6 @@ public abstract class UserServiceTest extends ServiceTest{
     @Test
     public void getAll() throws Exception {
         List<User> all = service.getAll();
-        assertMatch(all, ADMIN, USER);
+        assertMatch(all, ADMIN,ADMIN_EMPTY, USER);
     }
 }
