@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +28,7 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     @Transactional
     Meal save(Meal meal);
 
+    //@EntityGraph(attributePaths = {"user"})
     @Query("SELECT m FROM Meal m  LEFT JOIN FETCH m.user u WHERE m.id = :id AND u.id = :userId")
     Meal getWithUser(@Param("id") int id, @Param("userId") int userId);
 }
