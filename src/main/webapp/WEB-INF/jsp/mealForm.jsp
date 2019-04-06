@@ -11,7 +11,16 @@
 <section>
     <h3><a href="index.html"><spring:message code="mealform.home"/></a></h3>
     <h2>
-        <c:if test= ${param.action == 'create'>Create meal</c:if>}</h2>
+        <c:choose>
+            <c:when test= "${param.action == 'create'}">
+                <spring:message code="mealform.create"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="mealform.edit"/>
+            </c:otherwise>
+
+        </c:choose>
+    </h2>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post" action="meals">
