@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.service.MealService;
 
 @Controller
-public class MealRestController extends AbstractMealRestController {
+public class MealRestController extends AbstractMealController {
 
     @Autowired
     public MealRestController(MealService service) {
