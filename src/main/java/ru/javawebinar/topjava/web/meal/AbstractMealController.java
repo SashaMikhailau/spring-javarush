@@ -17,6 +17,10 @@ import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 public abstract class AbstractMealController {
+    public static final String START_DATE = "startDate";
+    public static final String END_DATE = "endDate";
+    public static final String START_TIME = "startTime";
+    public static final String END_TIME = "endTime";
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
