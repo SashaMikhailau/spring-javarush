@@ -87,8 +87,10 @@ class MealRestControllerTest extends AbstractControllerTest {
                         , SecurityUtil.authUserCaloriesPerDay(), START_DATE_TIME.toLocalTime(),
                         END_DATE_TIME.toLocalTime());
         mockMvc.perform(MockMvcRequestBuilders.post(REST_MEALS+"/filter")
-        .param(START_DATETIME_PARAM, DateTimeFormatter.ISO_DATE_TIME.format(START_DATE_TIME))
-        .param(END_DATETIME_PARAM,DateTimeFormatter.ISO_DATE_TIME.format(END_DATE_TIME)))
+        .param(START_DATE_PARAM, DateTimeFormatter.ISO_DATE.format(START_DATE_TIME.toLocalDate()))
+        .param(START_TIME_PARAM,DateTimeFormatter.ISO_TIME.format(END_DATE_TIME.toLocalTime()))
+        .param(END_DATE_PARAM,DateTimeFormatter.ISO_DATE.format(END_DATE_TIME.toLocalDate()))
+        .param(END_TIME_PARAM,DateTimeFormatter.ISO_TIME.format(END_DATE_TIME.toLocalTime())))
                 .andDo(MockMvcResultHandlers.log())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
